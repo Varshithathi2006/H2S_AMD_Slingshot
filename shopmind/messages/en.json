@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "orders": "Orders",
+    "admin": "Admin",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout"
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "askAI": "Ask AI about this product",
+    "stock": "Stock: {count}",
+    "price": "₹{price}"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty.",
+    "subtotal": "Subtotal",
+    "checkout": "Proceed to Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "address": "Shipping Address",
+    "placeOrder": "Place Order"
+  },
+  "chat": {
+    "title": "ShopMind AI Assistant",
+    "placeholder": "Ask anything...",
+    "voice": "Speak to AI"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "totalRevenue": "Total Revenue",
+    "orders": "Total Orders",
+    "lowStock": "Low Stock Items",
+    "conversion": "Conversion Rate"
+  }
+}
