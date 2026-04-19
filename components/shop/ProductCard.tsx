@@ -16,6 +16,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const t = useTranslations("product");
+  const { data: session } = useSession();
+  const router = useRouter();
   const [imgError, setImgError] = useState(false);
 
   const addToCart = async () => {
