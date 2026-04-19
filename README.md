@@ -1,5 +1,7 @@
 # ShopMind — Agentic AI E-commerce
 
+**Live Demo: [https://shopmind-qksgcb2uqq-el.a.run.app](https://shopmind-qksgcb2uqq-el.a.run.app)**
+
 ShopMind is a production-ready, AI-first e-commerce platform built with Next.js 14 and Groq AI (Llama 3). It features an intelligent shopping assistant that can search products, manage your cart, and track orders using natural language.
 
 ## 🚀 Key Features
