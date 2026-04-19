@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { Product } from "@prisma/client";
+import { Product } from "@/lib/generated/client";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, BrainCircuit, Star, ArrowLeft } from "lucide-react";

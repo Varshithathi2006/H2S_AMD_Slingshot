@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Product } from "@prisma/client";
+import { Product } from "@/lib/generated/client";
 import ProductCard from "./ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 

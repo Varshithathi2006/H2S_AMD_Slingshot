@@ -23,11 +23,13 @@ export default function LanguageToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Languages className="w-5 h-5 text-gray-500" />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger 
+        render={
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <Languages className="w-5 h-5 text-gray-500" />
+          </Button>
+        } 
+      />
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleLanguageChange("en")} className={locale === "en" ? "font-bold text-purple-600" : ""}>
           English

@@ -53,26 +53,28 @@ export default function Navbar() {
 
           {session ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <User className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="w-5 h-5" />
+                  </Button>
+                }
+              />
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem render={
                   <Link href="/orders" className="cursor-pointer">
                     {t("orders")}
                   </Link>
-                </DropdownMenuItem>
+                } />
                 {session.user.role === "ADMIN" && (
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem render={
                     <Link href="/admin/dashboard" className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Dashboard
                     </Link>
-                  </DropdownMenuItem>
+                  } />
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
