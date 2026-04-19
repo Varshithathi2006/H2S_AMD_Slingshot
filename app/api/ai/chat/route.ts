@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     // Call the agentic loop
-    const responseText = await runAgent(prompt, history || [], session.user.id);
+    const responseText = await runAgent(prompt, history || [], userId);
 
     return NextResponse.json({ content: responseText });
   } catch (error: any) {
