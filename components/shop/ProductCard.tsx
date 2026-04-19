@@ -1,5 +1,4 @@
-"use client";
-
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/generated/client";
@@ -17,8 +16,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const t = useTranslations("product");
-  const { data: session } = useSession();
-  const router = useRouter();
+  const [imgError, setImgError] = useState(false);
 
   const addToCart = async () => {
     if (!session) {
@@ -35,14 +33,17 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   };
 
+  const fallbackUrl = `https://placehold.co/600x400?text=${encodeURIComponent(product.name)}`;
+
   return (
     <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-100">
       <Link href={`/products/${product.id}`}>
         <CardHeader className="p-0 relative aspect-square">
           <Image
-            src={product.imageUrl}
+            src={imgError ? fallbackUrl : product.imageUrl}
             alt={product.name}
             fill
+            onError={() => setImgError(true)}
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-xs font-bold text-gray-800 border border-white/20">

@@ -1,76 +1,85 @@
-import { model } from "@/lib/gemini";
+import { groq, CHAT_MODEL } from "@/lib/groq";
 import { tools, toolImplementations } from "./tools";
 
 /**
- * The core Agent function that implements function calling with Gemini.
+ * The core Agent function that implements function calling with Groq.
  */
 export async function runAgent(
   userPrompt: string, 
   history: any[], 
   userId: string
 ) {
-  // 1. Initialize chat with given history and tools
-  const chat = model.startChat({
-    history: history,
-    tools: [
-      {
-        functionDeclarations: tools as any,
-      },
-    ],
-  });
+  // Convert tools to Groq/OpenAI function format
+  const groqTools = tools.map(tool => ({
+    type: "function" as const,
+    function: {
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.parameters,
+    },
+  }));
 
-  // 2. Send user message
-  let result = await chat.sendMessage(userPrompt);
-  let response = result.response;
+  // Convert history to Groq message format
+  // Note: history from Gemini might have a different format, 
+  // but usually it's { role, parts: [{ text }] }
+  // We'll simplify or assume OpenAI format for now, or convert it.
+  const messages: any[] = history.map(h => ({
+    role: h.role === "model" ? "assistant" : h.role,
+    content: typeof h.parts[0].text === "string" ? h.parts[0].text : JSON.stringify(h.parts[0]),
+  }));
 
-  // 3. ReAct Loop - handle up to 5 iterations of tool calls
+  messages.push({ role: "user", content: userPrompt });
+
+  // ReAct Loop - handle up to 5 iterations of tool calls
   let iterations = 0;
-  while (response.candidates![0].content.parts.some(p => p.functionCall) && iterations < 5) {
+  while (iterations < 5) {
     iterations++;
-    const functionCalls = response.candidates![0].content.parts.filter(p => p.functionCall);
     
-    const functionResponses = await Promise.all(
-      functionCalls.map(async (call) => {
-        const functionCall = call.functionCall!;
-        const toolName = functionCall.name as keyof typeof toolImplementations;
-        const args = functionCall.args as any;
+    const response = await groq.chat.completions.create({
+      model: CHAT_MODEL,
+      messages: messages,
+      tools: groqTools,
+      tool_choice: "auto",
+    });
+
+    const responseMessage = response.choices[0].message;
+    messages.push(responseMessage);
+
+    if (!responseMessage.tool_calls) {
+      return responseMessage.content || "";
+    }
+
+    // Process tool calls
+    const toolOutputs = await Promise.all(
+      responseMessage.tool_calls.map(async (toolCall) => {
+        const toolName = toolCall.function.name as keyof typeof toolImplementations;
+        const args = JSON.parse(toolCall.function.arguments);
 
         console.log(`[Agent] Calling tool: ${toolName}`, args);
 
         const toolFn = toolImplementations[toolName];
+        let result;
         if (!toolFn) {
-          return {
-            functionResponse: {
-              name: toolName,
-              response: { error: "Tool not found" },
-            },
-          };
+          result = { error: "Tool not found" };
+        } else {
+          try {
+            result = await toolFn({ ...args, userId });
+          } catch (error: any) {
+            result = { error: error.message };
+          }
         }
 
-        try {
-          // Add userId to args for tools that need it
-          const result = await toolFn({ ...args, userId });
-          return {
-            functionResponse: {
-              name: toolName,
-              response: { result },
-            },
-          };
-        } catch (error: any) {
-          return {
-            functionResponse: {
-              name: toolName,
-              response: { error: error.message },
-            },
-          };
-        }
+        return {
+          tool_call_id: toolCall.id,
+          role: "tool" as const,
+          name: toolName,
+          content: JSON.stringify(result),
+        };
       })
     );
 
-    // Feed tool results back to Gemini
-    result = await chat.sendMessage(functionResponses);
-    response = result.response;
+    messages.push(...toolOutputs);
   }
 
-  return response.text();
+  return "I've reached my iteration limit. How else can I help you?";
 }
