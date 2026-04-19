@@ -13,8 +13,9 @@ export async function GET() {
       include: { product: true },
     });
     return NextResponse.json(items);
-  } catch (error) {
-    return NextResponse.json({ message: "Error fetching cart" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[Cart GET Error]", error);
+    return NextResponse.json({ message: "Error fetching cart", error: error.message }, { status: 500 });
   }
 }
 
@@ -45,8 +46,9 @@ export async function POST(req: Request) {
       },
     });
     return NextResponse.json(newItem);
-  } catch (error) {
-    return NextResponse.json({ message: "Error adding to cart" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[Cart POST Error]", error);
+    return NextResponse.json({ message: "Error adding to cart", error: error.message }, { status: 500 });
   }
 }
 
@@ -60,7 +62,8 @@ export async function DELETE(req: Request) {
       where: { userId: session.user.id, productId },
     });
     return NextResponse.json({ message: "Removed from cart" });
-  } catch (error) {
-    return NextResponse.json({ message: "Error removing from cart" }, { status: 500 });
+  } catch (error: any) {
+    console.error("[Cart DELETE Error]", error);
+    return NextResponse.json({ message: "Error removing from cart", error: error.message }, { status: 500 });
   }
 }

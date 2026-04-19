@@ -18,7 +18,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // 2. Handle Localization
+    // 2. Handle Localization - Skip for API routes
+    if (pathname.startsWith("/api")) {
+      return NextResponse.next();
+    }
+
     return intlMiddleware(req);
   },
   {

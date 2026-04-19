@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { OrderStatus } from "@/lib/generated/client";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       data: {
         userId: session.user.id,
         total,
-        status: "PENDING",
+        status: OrderStatus.PENDING,
         items: {
           create: cartItems.map((item) => ({
             productId: item.productId,
